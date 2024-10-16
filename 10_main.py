@@ -1,6 +1,6 @@
 import os  # Imported for system clear
-from datetime import datetime
-import random
+from datetime import datetime  # Imported for savefile to log date
+import random  # Imported to randomize predetermined enemies
 
 # Importing character and weapon classes
 from character import Hero, enemy_list
@@ -15,12 +15,14 @@ for i in counter:
     enemies.append(enemy_list[i])
 
 
+# ActionError class
 class ActionError(Exception):
     """Exception when file error occurs"""
 
     pass
 
 
+# Function for user input for hero outside battle
 def user_input():
     print("\nMENU")
     print("1 Fight an enemy")
@@ -38,6 +40,7 @@ def user_input():
         print("Invalid action! Please enter a valid action number.")
 
 
+# Function for user input for hero when in battle
 def battle_input():
     print("\nMENU")
     print("1 Attack")
@@ -55,6 +58,7 @@ def battle_input():
         print("Invalid action! Please enter a valid action number.")
 
 
+# Function for battle actions based on user input
 def battle_actions(action, hero, enemy):
     if action == 1:
         hero.attack(enemy)
@@ -66,10 +70,12 @@ def battle_actions(action, hero, enemy):
         hero.equip(inventory())
 
 
+# Function for breaks in the game
 def input_break():
     input("\n--Press Any key to continue--")
 
 
+# Function for showing inventory and choosing new weapon and returning a weapon
 def inventory():
     while True:
         os.system("clear")
@@ -100,6 +106,7 @@ def inventory():
             input_break()
 
 
+# Function to save battle results
 def save_info(win: bool, enemy: str):
     time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     result = "Win" if win else "Defeated"
@@ -116,46 +123,47 @@ def save_info(win: bool, enemy: str):
 
 
 # MAIN PROGRAM
-
-win = False
-for enemy in enemies:
+win = False  # This variable was added to use in save_info function
+for enemy in enemies:  # We have to defeat all randomized enemies in order to win
     while win == False:
         if hero.health > 0:
             os.system("clear")
-            hero.health_bar.draw()
-            user = user_input()
+            hero.health_bar.draw()  # Prints the healthbar for the hero
+            user = user_input()  # Returns the userinput
 
             if user == 1:
                 print(f"\n---You have encountered {enemy.name}---\n")
                 input_break()
                 while True:
                     os.system("clear")
-                    hero.health_bar.draw()
-                    enemy.health_bar.draw()
+                    hero.health_bar.draw()  # Draws the current healthbar for the hero
+                    enemy.health_bar.draw()  # Draws the current healthbar for the enemy
 
-                    action = battle_input()
-                    battle_actions(action, hero, enemy)
+                    # Calling battle function with input from user
+                    battle_actions(battle_input(), hero, enemy)
 
+                    # If hero has 0 HP user looses and the log is updated
                     if hero.health <= 0:
                         print(f"{hero.name} died. Game over.")
                         save_info(win, enemy.name)
                         exit()
+                    # If enemy has 0 HP we break loop and go back to main menu
                     if enemy.health <= 0:
                         print(f"You have defeated {enemy.name}! You won!")
-
                         input_break()
                         break
                     input_break()
                 break
-            if user == 2:
+            if user == 2:  # Resting option, sets hero health to max again
                 print(f"\n{hero.name} is being lazy as f.. but healed to max health!")
                 hero.health = 100
-                hero.health_bar.update()
+                hero.health_bar.update()  # Need to update bar after setting new health
                 input_break()
 
-            if user == 3:
+            if user == 3:  # player can choose to quite, but it will be logged
                 print(f"You have Lost! Bye Bye")
                 save_info(win, "Deserting")
                 exit()
 win = True
+# After defeating all the enemies, it will be logged as a win
 save_info(win, enemy.name)

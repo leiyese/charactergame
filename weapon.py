@@ -1,3 +1,5 @@
+# Creating weaponclass with specific attributes
+# value is not used right now, but can be in the future if we want to implement a sell and purchase function
 class weapon:
     def __init__(self, name: str, weapon_type: str, damage: int, value: int) -> None:
         self.name = name
@@ -6,6 +8,7 @@ class weapon:
         self.value = value
 
 
+# creating different weapons and setting their attributes
 iron_sword = weapon(name="Iron Sword", weapon_type="sharp", damage=5, value=10)
 
 steel_sword = weapon(name="Steel Sword", weapon_type="sharp", damage=50, value=15)
